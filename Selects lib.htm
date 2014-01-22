@@ -1,0 +1,127 @@
+
+
+
+
+
+
+
+
+<script>
+
+function addOption(innerSelect, vALUE, tEXT, toEnd){
+	/** addOption(selectManzaneras, 0, "SELECCIONE UNO", true); **/
+	if(toEnd){	    
+		addOptionToEnd(innerSelect, vALUE, tEXT);	
+	}
+	else{
+	    //Se dulpica el array de opciones
+		var arrayOptions = new Array();
+		for(var i = 0; i < innerSelect.options.length; i++){
+		    arrayOptions[i] = innerSelect.options[i];
+	    }
+		//Se borran todas las opciones
+		for(var j = innerSelect.options.length; j > 0; j--){
+		    deleteFirst(innerSelect);
+	    }
+		//Se agrega la opcion al principio
+		addOptionToEnd(innerSelect, vALUE, tEXT);
+		//Se agregan las opciones ya existentes
+		for(var k = 0; k < arrayOptions.length; k++){
+		    addOptionToEnd(innerSelect, arrayOptions[k].value, arrayOptions[k].text);
+	    }
+	}
+}
+
+function addOptionToEnd(innerSelect, vALUE, tEXT){
+    var opt = document.createElement("OPTION");
+	try {
+		opt.text = tEXT;
+		opt.value = vALUE;
+		innerSelect.add(opt); // No funciona en IE
+	}
+	catch(ex) {
+		innerSelect.add(opt);
+		opt.innerText = tEXT;
+		opt.value = vALUE;
+	}	
+}
+
+function deleteFirst(innerSelect){
+	innerSelect.options[0] = null;
+}
+
+
+
+
+function resetSelectWhitText(innerSelect ,tEXT){
+    if(innerSelect.options[0].text != tEXT){
+	    addOption(innerSelect, null, tEXT, false);
+	}
+	innerSelect.selectedIndex = 0;
+
+}
+
+function deleteFirstIfHasText(innerSelect ,tEXT){	
+    if(innerSelect.options[0].text == tEXT){
+		deleteFirst(innerSelect);
+	}
+}
+
+function selectedOption(innerSelect){
+    return innerSelect.options[innerSelect.selectedIndex];
+}
+
+
+
+function testSelectFunctions(){
+	var arrayValues = eval("[['opcion1', 1 ], ['opcion2', 2 ], ['opcion3', 3 ],]");	
+	
+	//aca se agregan las opciones del array (observar que son arrays anidados)
+	var selectElem = document.getElementById('selectTest');
+	for(var i=0; i<arrayValues.length; i++){
+		addOption(selectElem, arrayValues[i][1], arrayValues[i][0], true);
+	}
+}
+
+
+function testCargarOpcion(){
+	var selectElem = document.getElementById('selectTest');
+	var vALUE = document.getElementById('inputTestValue').value;
+	var tEXT = document.getElementById('inputTestText').value;
+	var pOSITION = eval(selectedOption(document.getElementById('selectPositionTest')).value);
+	addOption(selectElem, vALUE, tEXT, pOSITION);
+}
+
+function testResetear(){
+	var selectElem = document.getElementById('selectTest');
+    resetSelectWhitText(selectElem ,'Seleccione una opcion');
+}
+
+</script>
+
+<body onload="javascript:testSelectFunctions();">
+
+
+
+<p>Selector para reemplazar opciones
+<select id="selectTest" onchange="javascript:deleteFirstIfHasText(this, 'Seleccione una opcion');">
+<option value=null>Seleccione una opcion</option>
+</select>
+</p>
+
+<p>
+Valor: <input type="text" value="0" id="inputTestValue" style="text-align: center;"></br>
+Texto: <input type="text" value="OpcionX" id="inputTestText" style="text-align: center;"></br>
+Posicion: <select id="selectPositionTest">
+<option value='true'>Al final</option>
+<option value='false'>Al principio</option>
+</select>
+</p>
+
+<input type="button" value="Agregar opcion" onclick="javascript:testCargarOpcion();">
+<input type="button" value="Reiniciar"  onclick="javascript:testResetear();">
+
+
+</body>
+
+
